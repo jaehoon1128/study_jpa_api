@@ -1,5 +1,6 @@
 package jh.jpaapi.doamin;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,6 +15,7 @@ public class Delivery {
     @Column(name = "delivery_id")
     private Long id;
 
+    @JsonIgnore     //양방항 인곳에 한곳은 막아놔야함(무한루프때문에..)
     @OneToOne(mappedBy = "delivery", fetch = FetchType.LAZY)
     private Order order;
 

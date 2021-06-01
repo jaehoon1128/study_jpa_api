@@ -11,7 +11,6 @@ import java.util.List;
 
 @Entity
 @Getter
-
 @Setter
 public class Member {
 
@@ -26,7 +25,7 @@ public class Member {
     @Embedded
     private Address address;
 
-    //@JsonIgnore   //json 반환시 해당 필드는 제외
+    @JsonIgnore     //양방항중 둘중 한곳은 막아놔야함(무한루프때문에..) 반대쪽
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
 }

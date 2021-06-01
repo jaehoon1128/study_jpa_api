@@ -1,5 +1,6 @@
 package jh.jpaapi.doamin;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jh.jpaapi.doamin.item.Item;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class OrderItem {
     @JoinColumn(name = "item_id")
     private Item item;
 
+    @JsonIgnore     //양방항중 둘중 한곳은 막아놔야함(무한루프때문에..) 반대쪽
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
@@ -36,7 +38,6 @@ public class OrderItem {
         orderItem.setItem(item);
         orderItem.setOrderPrice(orderPrice);
         orderItem.setCount(count);
-
         item.removeStock(count);
         return orderItem;
     }

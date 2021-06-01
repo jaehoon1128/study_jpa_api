@@ -2,6 +2,7 @@ package jh.jpaapi.repository;
 
 
 import jh.jpaapi.doamin.Order;
+import jh.jpaapi.repository.order.simplequery.OrderSimpleQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -89,6 +90,15 @@ public class OrderRepository {
         TypedQuery<Order> query = em.createQuery(cq).setMaxResults(1000); //최대 1000건
         return query.getResultList();
     }
+
+    public List<Order> findAllWithMemberDelivery() {
+        return em.createQuery(
+                "select o from Order as o " +
+                        " join fetch o.member as m " +
+                        " join fetch o.delivery d ", Order.class
+        ).getResultList();
+    }
+
 
 }
 
