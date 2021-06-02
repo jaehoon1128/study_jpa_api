@@ -13,6 +13,8 @@ spring:
         # show_sql: true #sout에 쿼리 출력
         format_sql: true
         default_batch_fetch_size: 100
+    open-in-view: false
+    # open-in-view: true #디폴트
 
 logging.level:
   org.hibernate.SQL: debug
