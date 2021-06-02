@@ -1,7 +1,12 @@
 package jh.jpaapi.repository;
 
 
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jh.jpaapi.doamin.Order;
+import jh.jpaapi.doamin.OrderStatus;
+import jh.jpaapi.doamin.QMember;
+import jh.jpaapi.doamin.QOrder;
 import jh.jpaapi.repository.order.simplequery.OrderSimpleQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -13,11 +18,18 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 
+import static jh.jpaapi.doamin.QOrder.*;
+
 @Repository
-@RequiredArgsConstructor
 public class OrderRepository {
 
     private final EntityManager em;
+    private final JPAQueryFactory query;
+
+    public OrderRepository(EntityManager em){
+        this.em = em;
+        query =  new JPAQueryFactory(em);
+    }
 
     public void save(Order order) {
         em.persist(order);
@@ -90,6 +102,37 @@ public class OrderRepository {
         TypedQuery<Order> query = em.createQuery(cq).setMaxResults(1000); //최대 1000건
         return query.getResultList();
     }
+
+    //QueryDSL
+    public List<Order> findAll(OrderSearch orderSearch){
+        QOrder order = QOrder.order;
+        QMember member = QMember.member;
+
+        return query
+                .select(order)
+                .from(order)
+                .join(order.member, member)
+                //.where(order.status.eq(orderSearch.getOrderStatus())) //정적 쿼리
+                //동적 쿼리
+                .where(statusEq(orderSearch.getOrderStatus()), memberLike(orderSearch.getMemberName()))
+                .limit(1000)
+                .fetch();
+    }
+
+    private BooleanExpression memberLike(String memberName) {
+        if(StringUtils.hasText(memberName)){
+            return null;
+        }
+        return QMember.member.name.like(memberName);
+    }
+
+    private BooleanExpression statusEq(OrderStatus statusCond){
+        if(statusCond == null){
+            return null;
+        }
+        return order.status.eq(statusCond);
+    }
+
 
     public List<Order> findAllWithMemberDelivery() {
         return em.createQuery(
