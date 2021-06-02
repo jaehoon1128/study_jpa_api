@@ -19,15 +19,15 @@ public class OrderRepository {
 
     private final EntityManager em;
 
-    public void save(Order order){
+    public void save(Order order) {
         em.persist(order);
     }
 
-    public Order findOne(Long id){
+    public Order findOne(Long id) {
         return em.find(Order.class, id);
     }
 
-    public List<Order> findAllByString(OrderSearch orderSearch){
+    public List<Order> findAllByString(OrderSearch orderSearch) {
         String jpql = "select o from Order as o join o.member as m";
         boolean isFirstCondition = true;
 
@@ -65,7 +65,7 @@ public class OrderRepository {
         return query.getResultList();
     }
 
-    public List<Order> findAllByCriteria(OrderSearch orderSearch){
+    public List<Order> findAllByCriteria(OrderSearch orderSearch) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Order> cq = cb.createQuery(Order.class);
         Root<Order> o = cq.from(Order.class);
@@ -98,7 +98,33 @@ public class OrderRepository {
                         " join fetch o.delivery d ", Order.class
         ).getResultList();
     }
+    
+    //jpa distinct -> DB에서 중복제거 + 애플리케이션에서 중복제거
+    //Root (Order) Entity가 중복일때 제거(애플리케이션에서 중복 제거)
+    //1:다 페치 조인시 페이징 처리를 못함(collection fetch join)
+    // setFirstReulst, setMaxResults 을 추가해도 쿼리상에도 나가지 않음
+    //   WARN ....  firstResult/maxResults specified with collection fetch; applying in memory!
+    // 컬렉션 페치 조인은 1개만 사용 가능. 컬렉 션 둘 이상에 페치 조인은 사용하면 안됨
+    // 데이터가 부정합하게 조화될 수 있음
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+                "select distinct o from Order as o " +
+                        " join fetch o.member as m " +
+                        " join fetch o.delivery as d " +
+                        " join fetch o.orderItems as oi " +
+                        " join fetch oi.item as i", Order.class)
+                //.setFirstResult(1)
+                //.setMaxResults(100)
+                .getResultList();
+    }
 
-
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        return em.createQuery(
+                "select o from Order as o " +
+                        " join fetch o.member as m " +
+                        " join fetch o.delivery d ", Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
 }
-
