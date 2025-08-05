@@ -25,7 +25,8 @@ public class OrderService {
     public Long order(Long memberId, Long itemId, int count) {
 
         //엔티티 조회
-        Member member = memberRepository.findById(memberId);
+        Member member = memberRepository.findById(memberId).orElseThrow(() ->
+                new IllegalArgumentException("Member not found with id: " + memberId));
         Item item = itemRepository.findById(itemId).orElseThrow(() -> 
             new IllegalArgumentException("Item not found with id: " + itemId));
 

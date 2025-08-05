@@ -1,7 +1,6 @@
 package jpabook.jpashop.service;
 
 import jpabook.jpashop.domain.Member;
-import jpabook.jpashop.repository.MemberRepository;
 import jpabook.jpashop.repository.MemberRepositoryV2;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,7 +39,8 @@ public class MemberService {
     }
 
     public Member findOne(Long memberId) {
-        return memberRepository.findById(memberId);
+        return memberRepository.findById(memberId).orElseThrow(() -> 
+            new IllegalArgumentException("Member not found with id: " + memberId));
     }
 
     /**
@@ -48,7 +48,8 @@ public class MemberService {
      */
     @Transactional
     public void update(Long id, String name) {
-        Member member = memberRepository.findById(id);
+        Member member = memberRepository.findById(id).orElseThrow(() -> 
+            new IllegalArgumentException("Member not found with id: " + id));
         member.setName(name);
     }
 

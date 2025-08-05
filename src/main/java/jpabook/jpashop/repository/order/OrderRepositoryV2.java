@@ -22,9 +22,4 @@ public interface OrderRepositoryV2 extends JpaRepository<Order,Long> {
 	@Query("select o from Order o join fetch o.member m join fetch o.delivery d")
 	List<Order> findAllWithMemberDelivery(Pageable pageable);
 
-	// 쓸데없는 주석~~
-	// 물짱이
-	/**
-	 * 코드 레빗도 이 주석 보고 pr 날려줄려나~~~~~~~~~~~~~~~~~~~~~~~~~~~ 살려줘어어어어어
-	 */
 }
