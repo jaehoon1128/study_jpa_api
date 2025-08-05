@@ -2,7 +2,10 @@ package jpabook.jpashop.service;
 
 import jpabook.jpashop.domain.*;
 import jpabook.jpashop.domain.item.Item;
-import jpabook.jpashop.repository.*;
+import jpabook.jpashop.repository.ItemRepository;
+import jpabook.jpashop.repository.MemberRepository;
+import jpabook.jpashop.repository.OrderRepository;
+import jpabook.jpashop.repository.OrderSearch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,8 +18,8 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final MemberRepositoryV2 memberRepository;
-    private final ItemRepositoryV2 itemRepository;
+    private final MemberRepository memberRepository;
+    private final ItemRepository itemRepository;
 
     /**
      * 주문
@@ -25,9 +28,8 @@ public class OrderService {
     public Long order(Long memberId, Long itemId, int count) {
 
         //엔티티 조회
-        Member member = aaabbbccc(memberId);
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> 
-            new IllegalArgumentException("Item not found with id: " + itemId));
+        Member member = memberRepository.findOne(memberId);
+        Item item = itemRepository.findOne(itemId);
 
         //배송정보 생성
         Delivery delivery = new Delivery();
@@ -55,10 +57,6 @@ public class OrderService {
         Order order = orderRepository.findOne(orderId);
         //주문 취소
         order.cancel();
-    }
-
-    private Member aaabbbccc(Long memberId) {
-        return memberRepository.findById(memberId).orElse(null);
     }
 
     //검색

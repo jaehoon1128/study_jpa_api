@@ -1,7 +1,7 @@
 package jpabook.jpashop.service;
 
 import jpabook.jpashop.domain.item.Item;
-import jpabook.jpashop.repository.ItemRepositoryV2;
+import jpabook.jpashop.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemService {
 
-    private final ItemRepositoryV2 itemRepository;
+    private final ItemRepository itemRepository;
 
     @Transactional
     public void saveItem(Item item) {
@@ -22,8 +22,7 @@ public class ItemService {
 
     @Transactional
     public void updateItem(Long itemId, String name, int price, int stockQuantity) {
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> 
-            new IllegalArgumentException("Item not found with id: " + itemId));
+        Item item = itemRepository.findOne(itemId);
         item.setName(name);
         item.setPrice(price);
         item.setStockQuantity(stockQuantity);
@@ -34,8 +33,7 @@ public class ItemService {
     }
 
     public Item findOne(Long itemId) {
-        return itemRepository.findById(itemId).orElseThrow(() -> 
-            new IllegalArgumentException("Item not found with id: " + itemId));
+        return itemRepository.findOne(itemId);
     }
 
 }
