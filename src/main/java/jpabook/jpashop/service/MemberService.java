@@ -53,4 +53,8 @@ public class MemberService {
         member.setName(name);
     }
 
+
+    public Member aaabbccdd(Long memberId) {
+        return memberRepository.findById(memberId).orElse(null);
+    }
 }

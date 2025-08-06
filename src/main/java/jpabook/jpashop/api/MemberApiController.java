@@ -86,6 +86,16 @@ public class MemberApiController {
         return new Result(collect);
     }
 
+    /**
+     * 수정 2.1 API
+     */
+    @PutMapping("/api/v2.1/members/{id}")
+    public UpdateMemberResponse updateMemberV2_1(@PathVariable("id") Long id, @RequestBody @Valid UpdateMemberRequest request) {
+        memberService.update(id, request.getName());
+        Member findMember = memberService.aaabbccdd(id);
+        return new UpdateMemberResponse(findMember.getId(), findMember.getName());
+    }
+
     @Data
     @AllArgsConstructor
     static class Result<T> {
